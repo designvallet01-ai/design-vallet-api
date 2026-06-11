@@ -72,6 +72,10 @@ export async function login(req, res) {
       .single();
 
     if (error || !user) {
+      if (error) {
+        console.error('Database query error during login:', error);
+        return res.status(500).json({ error: 'Database query error: ' + error.message });
+      }
       return res.status(401).json({ error: 'Invalid email or password.' });
     }
 
