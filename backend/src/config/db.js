@@ -422,4 +422,4 @@ if (isMock) {
 
 const db = dbInstance;
 export default db;
-export { mockDb };
+export { mockDb, isMock };

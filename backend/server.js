@@ -12,6 +12,7 @@ import imageRoutes from './src/routes/image.routes.js';
 import paymentRoutes from './src/routes/payment.routes.js';
 import orderRoutes from './src/routes/order.routes.js';
 import adminRoutes from './src/routes/admin.routes.js';
+import { isMock } from './src/config/db.js';
 
 dotenv.config();
 
@@ -52,7 +53,15 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'healthy',
     timestamp: new Date(),
-    uptime: process.uptime()
+    uptime: process.uptime(),
+    isMock,
+    diagnostics: {
+      hasSupabaseUrl: !!process.env.SUPABASE_URL,
+      hasSupabaseKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+      hasDatabaseUrl: !!process.env.DATABASE_URL,
+      supabaseUrl: process.env.SUPABASE_URL ? process.env.SUPABASE_URL.substring(0, 25) + '...' : null,
+      nodeEnv: process.env.NODE_ENV
+    }
   });
 });
 
