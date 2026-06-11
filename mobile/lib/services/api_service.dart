@@ -15,10 +15,11 @@ class ApiService {
     'http://localhost:5000/api',
     'http://10.0.2.2:5000/api',
     'http://10.59.164.178:5000/api',
+    'https://design-vallet-api-1.onrender.com/api',
     'https://designvalletapi.loca.lt/api',
   ];
 
-  static String _activeBaseUrl = 'https://designvalletapi.loca.lt/api'; // Default public fallback
+  static String _activeBaseUrl = 'https://design-vallet-api-1.onrender.com/api'; // Default production fallback
 
   final _storage = const FlutterSecureStorage();
   late http.Client _client;

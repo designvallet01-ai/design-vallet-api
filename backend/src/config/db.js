@@ -3,10 +3,10 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const supabaseUrl = process.env.SUPABASE_URL || 'https://mockproject.supabase.co';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'mock_service_key';
+const supabaseUrl = process.env.SUPABASE_URL || 'https://xxfjeysjcrgmukcpkmjk.supabase.co';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'sb_publishable_RveM2OwDIIMfY7KJfWXHNQ_iCkexI4r';
 
-const isMock = supabaseUrl.includes('mockproject') || !process.env.SUPABASE_SERVICE_ROLE_KEY;
+const isMock = supabaseUrl.includes('mockproject') || !supabaseKey;
 
 // --- Built-in In-Memory Mock Datastore for local offline runs ---
 const mockDb = {

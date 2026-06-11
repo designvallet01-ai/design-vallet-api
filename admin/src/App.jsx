@@ -6,7 +6,7 @@ import OrderManager from './pages/OrderManager.jsx';
 import CouponManager from './pages/CouponManager.jsx';
 import UsersList from './pages/UsersList.jsx';
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const BACKEND_URL = import.meta.env.VITE_API_URL || '/api';
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('admin_token') || '');
