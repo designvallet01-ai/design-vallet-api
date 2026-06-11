@@ -162,10 +162,6 @@ export default function App() {
               {loginLoading ? 'Authenticating...' : 'Sign In'}
             </button>
           </form>
-
-          <div style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            Demo credentials: <code style={{ color: 'var(--accent-secondary)' }}>designvallet01@gmail.com</code> / <code style={{ color: 'var(--accent-secondary)' }}>admin123</code>
-          </div>
         </div>
       </div>
     );
