@@ -3,8 +3,8 @@ import Razorpay from 'razorpay';
 import db from '../config/db.js';
 
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || '',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || '',
+  key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_mockkeyid123',
+  key_secret: process.env.RAZORPAY_KEY_SECRET || 'rzp_test_mocksecret123',
 });
 
 export async function createOrder(req, res) {
