@@ -234,7 +234,7 @@ export async function downloadInvoice(req, res) {
     doc.fillColor('#00adb5').fontSize(12).text(`${parseFloat(order.total_amount).toFixed(2)} INR`, 450, y, { width: 110, align: 'right' });
 
     y += 40;
-    doc.fillColor('#94a3b8').fontSize(9).font('Helvetica-Oblique').text('Thank you for purchasing original creative works at Design Vallet.', 50, y, { align: 'center' });
+    doc.fillColor('#94a3b8').fontSize(9).font('Helvetica-Oblique').text('Thank you for purchasing original creative works at Handloom craft.', 50, y, { align: 'center' });
     doc.text('This is a computer generated invoice and requires no signature.', 50, y + 12, { align: 'center' });
 
     doc.end();

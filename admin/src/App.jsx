@@ -116,7 +116,7 @@ export default function App() {
           <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <span style={{ fontSize: '3rem' }}>🔒</span>
             <h1 style={{ fontSize: '1.8rem', fontWeight: 800 }}>Admin Login</h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Access the Design Vallet marketplace controls.</p>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Access the Handloom craft marketplace controls.</p>
           </div>
 
           {loginError && (

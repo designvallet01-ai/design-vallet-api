@@ -35,7 +35,7 @@ export default function Sidebar({ activeTab, setActiveTab, onLogout, adminEmail 
           }}
         />
         <div>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Design Vallet</h2>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Handloom craft</h2>
           <span style={{ fontSize: '0.75rem', color: 'var(--accent-secondary)', fontWeight: 600, letterSpacing: '0.05em' }}>ADMIN PORTAL</span>
         </div>
       </div>

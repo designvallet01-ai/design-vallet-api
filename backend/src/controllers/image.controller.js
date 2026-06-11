@@ -259,7 +259,7 @@ export async function getMockDownload(req, res) {
       <svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
         <rect width="100%" height="100%" fill="#0f0f1a"/>
         <text x="50%" y="50%" font-family="sans-serif" font-size="60" fill="#00adb5" dominant-baseline="middle" text-anchor="middle">
-          Design Vallet - Original Purchased High-Resolution Image
+          Handloom craft - Original Purchased High-Resolution Image
         </text>
       </svg>
     `);
