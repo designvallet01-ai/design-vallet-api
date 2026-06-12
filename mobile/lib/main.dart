@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_jailbreak_detection/flutter_jailbreak_detection.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'providers/auth_provider.dart';
 import 'providers/gallery_provider.dart';
 import 'screens/login_screen.dart';
@@ -12,6 +14,19 @@ import 'services/api_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Clear secure storage on first run to prevent decryption errors from Android Auto Backup
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('first_run') ?? true) {
+      const storage = FlutterSecureStorage();
+      await storage.deleteAll();
+      await prefs.setBool('first_run', false);
+      debugPrint("🧹 [STORAGE] First run detected. Cleared secure storage to prevent decryption errors.");
+    }
+  } catch (e) {
+    debugPrint("⚠️ [STORAGE] Failed to check/clear secure storage: $e");
+  }
 
   // 1. Initialize Supabase Client
   try {
