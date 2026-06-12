@@ -115,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 20),
                 Center(
                   child: Text(
-                    "Design Vallet",
+                    "Handloom Craft",
                     style: TextStyle(
                       fontFamily: 'Outfit',
                       fontSize: 32,

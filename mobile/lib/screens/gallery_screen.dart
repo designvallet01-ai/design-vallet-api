@@ -35,7 +35,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF0A0A0F),
       appBar: AppBar(
-        title: const Text("Design Vallet", style: TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold)),
+        title: const Text("Handloom Craft", style: TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFF14141F),
         elevation: 0,
         actions: [
@@ -98,7 +98,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                       children: [
                         Text("Name: GUDURU PAVAN", style: TextStyle(color: Colors.white70)),
                         SizedBox(height: 5),
-                        Text("Agency: Design Vallet", style: TextStyle(color: Colors.white70)),
+                        Text("Agency: Handloom Craft", style: TextStyle(color: Colors.white70)),
                         SizedBox(height: 5),
                         Text("Email: designvallet01@gmail.com", style: TextStyle(color: Colors.white70)),
                         SizedBox(height: 5),

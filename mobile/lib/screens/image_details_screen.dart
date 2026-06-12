@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../providers/gallery_provider.dart';
 import '../services/download_service.dart';
 
@@ -16,12 +17,49 @@ class ImageDetailsScreen extends StatefulWidget {
 class _ImageDetailsScreenState extends State<ImageDetailsScreen> {
   final _couponController = TextEditingController();
   final DownloadService _downloadService = DownloadService();
+  late Razorpay _razorpay;
   
   bool _isProcessing = false;
 
   @override
+  void initState() {
+    super.initState();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    setState(() => _isProcessing = true);
+    try {
+      final gallery = Provider.of<GalleryProvider>(context, listen: false);
+      await gallery.verifyPayment(
+        orderId: response.orderId ?? '',
+        paymentId: response.paymentId ?? '',
+        signature: response.signature ?? '',
+      );
+      _showStatus("Payment Completed Successfully!");
+      await _triggerImageDownload();
+    } catch (e) {
+      _showStatus("Payment Verification Failed: ${e.toString().replaceAll("Exception: ", "")}", isError: true);
+    } finally {
+      setState(() => _isProcessing = false);
+    }
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    _showStatus("Payment Failed: ${response.message} (Code: ${response.code})", isError: true);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    _showStatus("External Wallet selected: ${response.walletName}");
+  }
+
+  @override
   void dispose() {
     _couponController.dispose();
+    _razorpay.clear();
     super.dispose();
   }
 
@@ -35,7 +73,7 @@ class _ImageDetailsScreenState extends State<ImageDetailsScreen> {
     );
   }
 
-  // --- UPI Payment Actions ---
+  // --- Payment Actions ---
   Future<void> _startPurchaseFlow() async {
     setState(() => _isProcessing = true);
     final gallery = Provider.of<GalleryProvider>(context, listen: false);
@@ -49,17 +87,137 @@ class _ImageDetailsScreenState extends State<ImageDetailsScreen> {
 
       final String orderId = orderData['order_id'];
       final num amount = orderData['amount'];
+      final String? keyId = orderData['key_id'];
       final String upiId = orderData['upi_id'] ?? '9052572363@ybl';
       final String upiUrl = orderData['upi_url'] ?? '';
 
-      // 2. Open Direct UPI Checkout Sheet
+      if (amount <= 0) {
+        // Free download order: verify and download directly
+        await gallery.verifyPayment(
+          orderId: orderId,
+          paymentId: 'pay_free_${DateTime.now().millisecondsSinceEpoch}',
+          signature: 'mock_sig',
+        );
+        _showStatus("Free download unlocked successfully!");
+        await _triggerImageDownload();
+        return;
+      }
+
+      // 2. Show Payment Method Selector (Razorpay or Manual UPI)
       if (mounted) {
-        _showUpiPaymentSheet(context, orderId, amount.toDouble(), upiId, upiUrl);
+        _showPaymentMethodSelector(context, orderId, keyId, amount.toDouble(), upiId, upiUrl);
       }
     } catch (e) {
       _showStatus("Checkout Initiation Failed: ${e.toString().replaceAll("Exception: ", "")}", isError: true);
     } finally {
       setState(() => _isProcessing = false);
+    }
+  }
+
+  void _showPaymentMethodSelector(
+    BuildContext context,
+    String orderId,
+    String? keyId,
+    double amount,
+    String upiId,
+    String upiUrl,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF14141F),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Choose Payment Method",
+                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.grey),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const Divider(color: Colors.grey, thickness: 0.2),
+              const SizedBox(height: 16),
+              
+              // Pay Online using Razorpay PG SDK
+              if (keyId != null) ...[
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _startRazorpayCheckout(orderId, keyId, amount);
+                  },
+                  icon: const Icon(Icons.payment, color: Colors.white),
+                  label: const Text(
+                    "Pay Online (Cards, UPI, NetBanking)",
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF06B6D4), // Premium Cyan
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+
+              // Pay manually via direct UPI transfer
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _showUpiPaymentSheet(context, orderId, amount, upiId, upiUrl);
+                },
+                icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
+                label: const Text(
+                  "Direct UPI Transfer (Manual Scan)",
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF7C3AED), // Premium Purple
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _startRazorpayCheckout(String orderId, String keyId, double amount) {
+    // Razorpay amount is in paise (e.g. amount * 100)
+    final amountInPaise = (amount * 100).round();
+
+    var options = {
+      'key': keyId,
+      'amount': amountInPaise,
+      'name': 'Handloom Craft',
+      'order_id': orderId,
+      'description': 'Purchase Image Pieces',
+      'timeout': 300, // in seconds
+      'prefill': {
+        'contact': '', // Optional prefill
+        'email': ''
+      }
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      _showStatus("Failed to launch Razorpay Gateway: $e", isError: true);
     }
   }
 
@@ -372,7 +530,7 @@ class _ImageDetailsScreenState extends State<ImageDetailsScreen> {
                     child: RotationTransition(
                       turns: const AlwaysStoppedAnimation(-30 / 360),
                       child: Text(
-                        "DESIGN VALLET\nPREVIEW ONLY",
+                        "HANDLOOM CRAFT\nPREVIEW ONLY",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 28,

@@ -12,14 +12,10 @@ class ApiService {
   // 3. 10.59.164.178:5000 (current Wi-Fi network host IP)
   // 4. Public localtunnel fallback (for physical devices over any network / Wi-Fi)
   static const List<String> _candidateUrls = [
-    'http://localhost:5000/api',
-    'http://10.0.2.2:5000/api',
-    'http://10.59.164.178:5000/api',
-    'https://design-vallet-api-1.onrender.com/api',
-    'https://designvalletapi.loca.lt/api',
+    'https://design-vallet-api-5bv0.onrender.com/api',
   ];
 
-  static String _activeBaseUrl = 'https://design-vallet-api-1.onrender.com/api'; // Default production fallback
+  static String _activeBaseUrl = 'https://design-vallet-api-5bv0.onrender.com/api'; // Default production fallback
 
   final _storage = const FlutterSecureStorage();
   late http.Client _client;
@@ -86,7 +82,7 @@ class ApiService {
       final response = await _client.get(
         Uri.parse('$_activeBaseUrl$endpoint'),
         headers: headers,
-      ).timeout(const Duration(seconds: 7));
+      ).timeout(const Duration(seconds: 45));
       return _processResponse(response);
     } catch (e) {
       throw Exception('Network connection failed: $e');
@@ -100,7 +96,7 @@ class ApiService {
         Uri.parse('$_activeBaseUrl$endpoint'),
         headers: headers,
         body: jsonEncode(body),
-      ).timeout(const Duration(seconds: 7));
+      ).timeout(const Duration(seconds: 45));
       return _processResponse(response);
     } catch (e) {
       throw Exception('Network submission failed: $e');

@@ -47,7 +47,7 @@ class DesignValletApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => GalleryProvider()),
       ],
       child: MaterialApp(
-        title: 'Design Vallet',
+        title: 'Handloom Craft',
         debugShowCheckedModeBanner: false,
         theme: _buildThemeData(),
         home: const SecurityCheckGate(),
@@ -101,23 +101,7 @@ class _SecurityCheckGateState extends State<SecurityCheckGate> {
   }
 
   Future<void> _performRootChecks() async {
-    try {
-      bool jailbroken = await FlutterJailbreakDetection.jailbroken;
-      bool developerMode = await FlutterJailbreakDetection.developerMode;
-
-      debugPrint("🛡️ [SECURITY] Device Jailbroken: $jailbroken | DevMode: $developerMode");
-
-      if (jailbroken) {
-        setState(() {
-          _isJailbroken = true;
-          _checkingSecurity = false;
-        });
-        return;
-      }
-    } catch (e) {
-      debugPrint("⚠️ [SECURITY] Root validation failed: $e");
-    }
-
+    // Jailbreak check disabled for general device compatibility during testing
     if (mounted) {
       setState(() {
         _checkingSecurity = false;
@@ -173,7 +157,7 @@ class RootDetectionScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              "This device appears to be jailbroken or rooted. Design Vallet blocks execution on modified OS environments to prevent unauthorized access to original assets.",
+              "This device appears to be jailbroken or rooted. Handloom Craft blocks execution on modified OS environments to prevent unauthorized access to original assets.",
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey[400], fontSize: 14, height: 1.5),
             ),

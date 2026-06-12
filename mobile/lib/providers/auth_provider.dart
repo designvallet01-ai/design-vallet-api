@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../services/api_service.dart';
@@ -25,8 +26,11 @@ class AuthProvider extends ChangeNotifier {
     _token = await _storage.read(key: 'jwt_token');
     final userStr = await _storage.read(key: 'user_profile');
     if (userStr != null) {
-      // Decode simulated user data
-      // For brevity, store simple json user strings
+      try {
+        _user = jsonDecode(userStr) as Map<String, dynamic>;
+      } catch (e) {
+        debugPrint("Error decoding user profile session: $e");
+      }
     }
     notifyListeners();
   }
@@ -43,6 +47,7 @@ class AuthProvider extends ChangeNotifier {
       _user = res['user'];
 
       await _storage.write(key: 'jwt_token', value: _token);
+      await _storage.write(key: 'user_profile', value: jsonEncode(_user));
       notifyListeners();
     } catch (e) {
       rethrow;
@@ -65,6 +70,7 @@ class AuthProvider extends ChangeNotifier {
       _user = res['user'];
 
       await _storage.write(key: 'jwt_token', value: _token);
+      await _storage.write(key: 'user_profile', value: jsonEncode(_user));
       notifyListeners();
     } catch (e) {
       rethrow;
