@@ -3,11 +3,11 @@ import Razorpay from 'razorpay';
 import db from '../config/db.js';
 
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_mockkeyid123',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || 'rzp_test_mocksecret123',
+  key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_T0Z00aA5gcQ4gg',
+  key_secret: process.env.RAZORPAY_KEY_SECRET || 's20K43CJnvCJQ3GWufsg3uhu',
 });
 
-const isMockMode = (process.env.RAZORPAY_KEY_ID || 'rzp_test_mockkeyid123') === 'rzp_test_mockkeyid123';
+const isMockMode = (process.env.RAZORPAY_KEY_ID || 'rzp_test_T0Z00aA5gcQ4gg') === 'rzp_test_mockkeyid123';
 
 export async function createOrder(req, res) {
   try {
@@ -145,7 +145,7 @@ export async function createOrder(req, res) {
       image_title: image.title,
       upi_id: payeeUpi,
       upi_url: upiUrl,
-      key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_mockkeyid123'
+      key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_T0Z00aA5gcQ4gg'
     });
   } catch (error) {
     console.error('Create order error:', error);
@@ -234,7 +234,7 @@ export async function verifyPayment(req, res) {
       isSignatureValid = true;
     } else {
       // Enforce real signature verification
-      const secret = process.env.RAZORPAY_KEY_SECRET || 'rzp_test_mocksecret123';
+      const secret = process.env.RAZORPAY_KEY_SECRET || 's20K43CJnvCJQ3GWufsg3uhu';
       const body = razorpay_order_id + '|' + razorpay_payment_id;
       const expectedSignature = crypto
         .createHmac('sha256', secret)
