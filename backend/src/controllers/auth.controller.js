@@ -72,7 +72,7 @@ export async function login(req, res) {
       .single();
 
     if (error || !user) {
-      if (error) {
+      if (error && error.code !== 'PGRST116') {
         console.error('Database query error during login:', error);
         return res.status(500).json({ error: 'Database query error: ' + error.message });
       }

@@ -71,8 +71,8 @@ async function runVerification() {
     const dbModule = await import('../src/config/db.js');
     const db = dbModule.default;
     
-    const { data: users } = await db.from('users').select('*').eq('email', 'admin@designvallet.com');
-    if (users && users.length > 0 && users[0].email === 'admin@designvallet.com') {
+    const { data: users } = await db.from('users').select('*').eq('email', 'designvallet01@gmail.com');
+    if (users && users.length > 0 && users[0].email === 'designvallet01@gmail.com') {
       console.log('✅ Test 4: Supabase Client SDK mockup connection & SELECT query successful.');
     } else {
       throw new Error('Supabase client select returned invalid structure.');
